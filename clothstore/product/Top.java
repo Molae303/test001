@@ -1,10 +1,10 @@
-package product;
+package clothstore.product;
 
 import java.io.Serializable;
 
 public class Top extends Cloth implements Serializable{
 
-	private static int codeCount = 1000;
+	private int codeCount = 1000;
 
 	public Top(String name, int price) {
 		super(name, price);
@@ -12,12 +12,12 @@ public class Top extends Cloth implements Serializable{
 		this.setCode("top" + codeCount);
 	}
 
-	public static int getCodeCount() {
-		return codeCount;
+	public int getCodeCount() {
+		return this.codeCount;
 	}
 
-	public static void setCodeCount(int codeCount) {
-		Top.codeCount = codeCount;
+	public void setCodeCount(int codeCount) {
+		this.codeCount = codeCount;
 	}
 
 

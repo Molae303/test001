@@ -1,4 +1,4 @@
-package product;
+package clothstore.product;
 
 import java.io.Serializable;
 

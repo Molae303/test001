@@ -1,4 +1,4 @@
-package user;
+package clothstore.user;
 
 import java.io.Serializable;
 

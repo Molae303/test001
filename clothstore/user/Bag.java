@@ -1,10 +1,10 @@
-package user;
+package clothstore.user;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import product.Cloth;
-import product.ShopList;
+import clothstore.product.Cloth;
+import clothstore.product.ShopList;
 
 public class Bag implements Serializable {
 
@@ -32,16 +32,16 @@ public class Bag implements Serializable {
 		this.totalPrice = totalPrice;
 	}
 
-	public void insertBag(Cloth cloth) {
+	public void insertBag(Cloth cloth, int quantity) {
 		boolean flag = false;
 		for (BagProduct data : bagList) {
 			if (data.getClothCode().equals(cloth.getCode())) {
-				data.setQuantity(data.getQuantity() + 1);
+				data.setQuantity(data.getQuantity() + quantity);
 				flag = true;
 			}
 		}
 		if (!flag) {
-			bagList.add(new BagProduct(cloth));
+			bagList.add(new BagProduct(cloth, quantity));
 		}
 
 	}

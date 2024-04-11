@@ -1,10 +1,10 @@
-package user;
+package clothstore.user;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import product.Cloth;
-import product.ShopList;
+import clothstore.product.Cloth;
+import clothstore.product.ShopList;
 
 public class BagProduct implements Serializable {
 
@@ -12,10 +12,10 @@ public class BagProduct implements Serializable {
 	private String clothCode;
 	private int quantity;
 
-	public BagProduct(Cloth bagCloth) {
+	public BagProduct(Cloth bagCloth, int quantity) {
 		this.bagCloth = bagCloth;
 		this.clothCode = bagCloth.getCode();
-		this.quantity = 1;
+		this.quantity = quantity;
 	}
 
 	public Cloth getBagCloth() {

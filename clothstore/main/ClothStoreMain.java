@@ -1,4 +1,4 @@
-package main;
+package clothstore.main;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
-import product.Cloth;
-import product.Pants;
-import product.ShopList;
-import product.Top;
-import user.BagProduct;
-import user.Order;
-import user.User;
+import clothstore.product.Cloth;
+import clothstore.product.Pants;
+import clothstore.product.ShopList;
+import clothstore.product.Top;
+import clothstore.user.BagProduct;
+import clothstore.user.Order;
+import clothstore.user.User;
 
 public class ClothStoreMain {
 
@@ -29,6 +29,11 @@ public class ClothStoreMain {
 	public static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[] args) {
+
+//		user = new User("admin1", "admin1", "관리자", "01033298317");
+//		user.setAdmin(true);
+//		userList.add(user);
+//		saveUserList();
 
 		loadingShopList();
 		loadingUserList();
@@ -104,7 +109,7 @@ public class ClothStoreMain {
 	}
 
 	// 유저리스트 파일에 저장
-	public static void saverUserList() {
+	public static void saveUserList() {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("userData.txt")))) {
 			oos.writeObject(userList);
 		} catch (FileNotFoundException e) {
@@ -158,7 +163,7 @@ public class ClothStoreMain {
 			System.out.println("이미 가입된 회원입니다.");
 		} else {
 			userList.add(newUser);
-			saverUserList();
+			saveUserList();
 		}
 	}
 
@@ -225,9 +230,10 @@ public class ClothStoreMain {
 		System.out.println("\n================================================================");
 		System.out.println("카테고리\t상품코드\t\t상품명\t\t가격");
 		shopList.stream().sorted().forEach(n -> n.printShopList());
-		System.out.println("\n================================================================\n");
+		System.out.println("================================================================\n");
 		boolean flag = false;
 		Cloth cloth = null;
+		int inputQuantity = 0;
 		System.out.print("장바구니에 추가하실 상품의 코드를 입력해주세요(메인메뉴:-1) : ");
 		String inputCode = sc.nextLine();
 		if (inputCode.equals("-1")) {
@@ -236,12 +242,21 @@ public class ClothStoreMain {
 		for (ShopList data : shopList) {
 			if (data.getCloth().getCode().equals(inputCode) && data.getClothStack() != 0) {
 				cloth = data.getCloth();
-				data.setClothStack(data.getClothStack() - 1);
+				System.out.print("장바구니에 담을 수량을 입력해주세요 : ");
+				inputQuantity = sc.nextInt();
+				sc.nextLine();
+				if (data.getClothStack() - inputQuantity < 0 || inputQuantity < 0) {
+					System.out.println("상품의 재고가 부족합니다. 주문가능 수량 : " + data.getClothStack());
+					flag = false;
+					return;
+				}
+				data.setClothStack(data.getClothStack() - inputQuantity);
 				flag = true;
 			}
 		}
 		if (flag) {
-			user.getBag().insertBag(cloth);
+
+			user.getBag().insertBag(cloth, inputQuantity);
 			saveUserData();
 		} else {
 			System.out.println("상품이 존재하지않거나 품절입니다.");
@@ -364,7 +379,7 @@ public class ClothStoreMain {
 				data = user;
 			}
 		}
-		saverUserList();
+		saveUserList();
 
 	}
 
@@ -408,14 +423,14 @@ public class ClothStoreMain {
 
 	// (admin)제품리스트보기
 	public static void showShopList() {
+		System.out.println("================================================================");
 		System.out.println("상품코드\t\t카테고리\t상품명\t\t가격\t재고");
 		shopList.stream().sorted().forEach(n -> n.printShopListForAdmin());
+		System.out.println("================================================================");
 	}
 
 	// (admin)제품추가
 	public static void insertShopList() {
-		System.out.println("상품코드\t\t카테고리\t상품명\t\t가격\t재고");
-		shopList.stream().sorted().forEach(n -> n.printShopListForAdmin());
 		System.out.println("제품추가메뉴입니다.");
 		System.out.print("추가하실제품의 카테고리(메인메뉴:-1) : ");
 		String inputCategory = sc.nextLine().toUpperCase();
@@ -428,13 +443,18 @@ public class ClothStoreMain {
 		int inputPrice = sc.nextInt();
 		System.out.print("재고량 : ");
 		int inputStack = sc.nextInt();
+		boolean flag = false;
 		switch (inputCategory) {
 		case "TOP":
 			Top top = new Top(inputName, inputPrice);
-			for (ShopList data : shopList) {
-				if (data.getCloth().getCode().equals(top.getCode())) {
-					top.setCodeCount(top.getCodeCount() + 1);
-					top.setCode("top" + top.getCodeCount());
+			while (!flag) {
+				flag = true;
+				for (ShopList data : shopList) {
+					if (top.getCode().equals(data.getCloth().getCode())) {
+						top.setCodeCount(top.getCodeCount() + 1);
+						top.setCode("top" + top.getCodeCount());
+						flag = false;
+					}
 				}
 			}
 			ShopList newTop = new ShopList(top, inputStack);
@@ -442,13 +462,17 @@ public class ClothStoreMain {
 			break;
 		case "PANTS":
 			Pants pants = new Pants(inputName, inputPrice);
-			for (ShopList data : shopList) {
-				if (data.getCloth().getCode().equals(pants.getCode())) {
-					pants.setCodeCount(pants.getCodeCount() + 1);
-					pants.setCode("pan" + pants.getCodeCount());
+			while (!flag) {
+				flag = true;
+				for (ShopList data : shopList) {
+					if (pants.getCode().equals(data.getCloth().getCode())) {
+						pants.setCodeCount(pants.getCodeCount() + 1);
+						pants.setCode("pan" + pants.getCodeCount());
+						flag = false;
+					}
 				}
 			}
-			ShopList newPants = new ShopList(new Pants(inputName, inputPrice), inputStack);
+			ShopList newPants = new ShopList(pants, inputStack);
 			shopList.add(newPants);
 			break;
 		}
@@ -470,8 +494,7 @@ public class ClothStoreMain {
 	public static void updateShopList() {
 		boolean flag = false;
 		ShopList updateShopList = null;
-		System.out.println("상품코드\t\t카테고리\t상품명\t\t가격\t재고");
-		shopList.stream().sorted().forEach(n -> n.printShopListForAdmin());
+		showShopList();
 		System.out.print("수정하실 제품코드를 입력해주세요(메인메뉴:-1) : ");
 		String inputCode = sc.nextLine();
 		if (inputCode.equals("-1")) {
@@ -486,7 +509,7 @@ public class ClothStoreMain {
 		if (!flag) {
 			System.out.println("상품코드가 존재하지않습니다.");
 		}
-		
+
 		while (flag) {
 			updateShopList.printShopListForAdmin();
 			String[] menu = { "name", "price", "stack" };
@@ -518,7 +541,7 @@ public class ClothStoreMain {
 				break;
 			}
 		}
-		
+
 		saveShopList();
 	}
 
@@ -526,8 +549,7 @@ public class ClothStoreMain {
 	public static void deleteShopList() {
 		boolean flag = false;
 		ShopList modifyShopList = null;
-		System.out.println("상품코드\t\t카테고리\t상품명\t\t가격\t재고");
-		shopList.stream().sorted().forEach(n -> n.printShopListForAdmin());
+		showShopList();
 		System.out.print("삭제하실 제품코드를 입력해주세요(메인메뉴:-1) : ");
 		String inputCode = sc.nextLine();
 		if (inputCode.equals("-1")) {
