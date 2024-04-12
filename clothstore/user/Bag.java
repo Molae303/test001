@@ -61,7 +61,7 @@ public class Bag implements Serializable {
 		}
 		this.updateTotalPrice();
 		System.out.print("\n상품의 총가격 : " + this.totalPrice);
-		System.out.println("\n");
+		System.out.println("");
 	}
 
 }

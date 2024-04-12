@@ -6,11 +6,13 @@ public class Order implements Serializable{
 	
 	private User user;
 	private String orderdate;
+	private String code;
 	
 	public Order(User user, String orderdate) {
 		super();
 		this.user = user;
 		this.orderdate = orderdate;
+		this.code = null;
 	}
 
 	public User getUser() {
@@ -25,6 +27,13 @@ public class Order implements Serializable{
 	public void setOrderdate(String orderdate) {
 		this.orderdate = orderdate;
 	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	
 	
 	
 }

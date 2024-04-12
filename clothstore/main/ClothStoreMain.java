@@ -30,18 +30,13 @@ public class ClothStoreMain {
 
 	public static void main(String[] args) {
 
-//		user = new User("admin1", "admin1", "관리자", "01033298317");
-//		user.setAdmin(true);
-//		userList.add(user);
-//		saveUserList();
-
 		loadingShopList();
 		loadingUserList();
 
 		boolean exitFlag = false;
 
+		String[] menu = { "로그인", "회원가입", "종료" };
 		while (!exitFlag) {
-			String[] menu = { "login", "createUser", "exit" };
 			System.out.println("*****************************");
 			System.out.println("*****\tCloth Store\t*****");
 			System.out.println("*****************************");
@@ -50,10 +45,10 @@ public class ClothStoreMain {
 			sc.nextLine();
 
 			switch (menu[inputNum - 1]) {
-			case "exit":
+			case "종료":
 				exitFlag = true;
 				break;
-			case "login":
+			case "로그인":
 				if (loginUser()) {
 					System.out.println("로그인완료");
 					System.out.println(user.toString());
@@ -68,7 +63,7 @@ public class ClothStoreMain {
 					}
 				}
 				break;
-			case "createUser":
+			case "회원가입":
 				createUser();
 				break;
 			default:
@@ -121,22 +116,20 @@ public class ClothStoreMain {
 	// 로그인
 	public static boolean loginUser() {
 		boolean flag = false;
-		while (!flag) {
-			System.out.println("아이디와 비밀번호를 입력해주세요");
-			System.out.print("아이디 : ");
-			String inputId = sc.nextLine();
-			System.out.print("비밀번호: ");
-			String inputPw = sc.nextLine();
+		System.out.println("아이디와 비밀번호를 입력해주세요");
+		System.out.print("아이디 : ");
+		String inputId = sc.nextLine();
+		System.out.print("비밀번호: ");
+		String inputPw = sc.nextLine();
 
-			for (User data : userList) {
-				if (inputId.equals(data.getId()) && inputPw.equals(data.getPw())) {
-					user = data;
-					flag = true;
-				}
+		for (User data : userList) {
+			if (inputId.equals(data.getId()) && inputPw.equals(data.getPw())) {
+				user = data;
+				flag = true;
 			}
-			if (!flag) {
-				System.out.println("아이디와비밀번호가 맞지않습니다.");
-			}
+		}
+		if (!flag) {
+			System.out.println("아이디와비밀번호가 맞지않습니다.");
 		}
 		return flag;
 	}
@@ -162,6 +155,7 @@ public class ClothStoreMain {
 		if (flag) {
 			System.out.println("이미 가입된 회원입니다.");
 		} else {
+			System.out.println("회원가입 완료");
 			userList.add(newUser);
 			saveUserList();
 		}
@@ -171,7 +165,7 @@ public class ClothStoreMain {
 	public static void userMenuSelect() {
 		// 1.장바구니목록 2.추가 3.삭제(모두비우기) 4.주문하기 5.고객정보(주문내역)
 
-		String[] menu = { "showBag", "insert", "delete", "clear", "order", "checkOrder" };
+		String[] menu = { "장바구니보기", "장바구니상품추가", "장바구니상품삭제", "장바구니비우기", "주문하기", "주문내역확인" };
 		boolean flag = false;
 		while (!flag) {
 			System.out.println("\n1.장바구니목록보기\t2.장바구니상품추가\n3.장바구니상품삭제\t4.장바구니비우기\n5.장바구니상품주문하기\t6.주문내역확인하기\n0.로그아웃");
@@ -185,22 +179,22 @@ public class ClothStoreMain {
 			}
 
 			switch (menu[inputNum - 1]) {
-			case "showBag":
+			case "장바구니보기":
 				showBag();
 				break;
-			case "insert":
+			case "장바구니상품추가":
 				insertBag();
 				break;
-			case "delete":
+			case "장바구니상품삭제":
 				deleteBag();
 				break;
-			case "clear":
+			case "장바구니비우기":
 				clearBag();
 				break;
-			case "order":
+			case "주문하기":
 				orderBag();
 				break;
-			case "checkOrder":
+			case "주문내역확인":
 				checkOrder();
 				break;
 			default:
@@ -387,7 +381,7 @@ public class ClothStoreMain {
 	public static void adminMenuSelect() {
 
 		boolean flag = false;
-		String[] menu = { "showList", "insert", "update", "delete", "showOrder" };
+		String[] menu = { "판매리스트보기", "판매제품추가", "판매제품수정", "판매제품삭제", "주문내역조회" };
 
 		while (!flag) {
 			System.out.print("1.제품리스트보기\t2.제품추가\n3.제품수정\t\t4.제품삭제\n5.주문내역조회\t0.로그아웃\n메뉴선택>> ");
@@ -400,19 +394,19 @@ public class ClothStoreMain {
 			}
 
 			switch (menu[inputNum - 1]) {
-			case "showList":
+			case "판매리스트보기":
 				showShopList();
 				break;
-			case "insert":
+			case "판매제품추가":
 				insertShopList();
 				break;
-			case "update":
+			case "판매제품수정":
 				updateShopList();
 				break;
-			case "delete":
+			case "판매제품삭제":
 				deleteShopList();
 				break;
-			case "showOrder":
+			case "주문내역조회":
 				showOrderList();
 				break;
 			default:
@@ -512,7 +506,7 @@ public class ClothStoreMain {
 
 		while (flag) {
 			updateShopList.printShopListForAdmin();
-			String[] menu = { "name", "price", "stack" };
+			String[] menu = { "상품명", "가격", "수량" };
 
 			System.out.print("수정하실 메뉴를 선택해주세요\n1.상품명 2.가격 3.수량 -1.메인메뉴 >> ");
 			int inputNum = sc.nextInt();
@@ -522,17 +516,17 @@ public class ClothStoreMain {
 				continue;
 			}
 			switch (menu[inputNum - 1]) {
-			case "name":
+			case "상품명":
 				System.out.print("상품명 : ");
 				String inputName = sc.nextLine();
 				updateShopList.getCloth().setName(inputName);
 				break;
-			case "price":
+			case "가격":
 				System.out.print("가격 : ");
 				int inputPrice = sc.nextInt();
 				updateShopList.getCloth().setPrice(inputPrice);
 				break;
-			case "stack":
+			case "수량":
 				System.out.print("재고량 : ");
 				int inputStack = sc.nextInt();
 				updateShopList.setClothStack(inputStack);
@@ -577,8 +571,9 @@ public class ClothStoreMain {
 		for (Order data : orderList) {
 			System.out.println("================================================================");
 			System.out.println("주문일 : " + data.getOrderdate());
-			System.out.println("주문자 정보 ");
+			System.out.println("\n주문자 정보 ");
 			data.getUser().showUserInfo();
+			System.out.print("\n주문내역");
 			data.getUser().getBag().showBagList();
 			System.out.println("================================================================");
 			totalSales += data.getUser().getBag().getTotalPrice();
